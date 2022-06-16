@@ -9,15 +9,16 @@ import random
 
 which_one = 0
 dataset = pd.read_csv('labels.txt', header=None, sep=' ')
-winlose = ""
+
+win = [0, 0]
+
+winlose = ["GOGOGO"]
+comp = 0
 
 
-
-def prediction(imgae_file):
+def prediction(imgae_file, win, winlose):
     # Load the model
     model = load_model('keras_model.h5')
-
-
 
     # Create the array of the right shape to feed into the keras model
     # The 'length' or number of images you can put into the array is
@@ -48,9 +49,7 @@ def prediction(imgae_file):
     max_value = 0
     index = -1
 
-
     print(dataset)
-
 
     for num in prediction[0]:
         index += 1
@@ -60,71 +59,91 @@ def prediction(imgae_file):
     print("Max Probability Value", max_value, "Which_one:", which_one, "is", dataset[1][which_one])
     comp = random.randint(0, 2)
     print("電腦出：" + dataset[1][comp])
-
     if which_one == 0:
         if comp == 0:
             print("平手")
-            winlose = "平手"
+            winlose[0] = "TIE"
         elif comp == 1:
             print("贏惹")
-            winlose = "贏惹"
+            winlose[0] = "WIN"
+            win[0] += 1
         elif comp == 2:
             print("輸惹")
-            winlose = "輸惹"
-
+            winlose[0] = "LOSE"
+            win[1] += 1
     elif which_one == 1:
         if comp == 0:
             print("輸惹")
-            winlose = "輸惹"
+            winlose[0] = "LOSE"
+            win[1] += 1
         elif comp == 1:
             print("平手")
-            winlose = "平手"
+            winlose[0] = "TIE"
         elif comp == 2:
             print("贏惹")
-            winlose = "贏惹"
+            winlose[0] = "WIN"
+            win[0] += 1
 
     elif which_one == 2:
         if comp == 0:
             print("贏惹")
-            inlose = "贏惹"
+            winlose = "WIN"
+            win[0] += 1
         elif comp == 1:
             print("輸惹")
-            winlose = "輸惹"
+            winlose = "LOSE"
+            win[1] += 1
         elif comp == 2:
             print("平手")
-            winlose = "平手"
+            winlose = "TIE"
+
 
 
 ## source tutorial-env/bin/activate
 
 
 cap = cv2.VideoCapture(0)
+## 顯示標題
+org = (35, 100)
+fontFace = cv2.FONT_HERSHEY_COMPLEX
+fontScale = 2
+thickness = 3
+lineType = 1
+bottomLeftOrigin = 4
 
-while (1):
+while True:
     # 從攝影機擷取一張影像
     ret, frame = cap.read()
+    winloseView = np.ones((600, 600, 3), np.uint8) * 255
 
+    cv2.putText(winloseView, 'Paper Scissor Stone Game', org, cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 0), thickness,
+                lineType)  # cv2.putText(winloseView, text, org, fontFace, fontScale, (255, 255, 0), thickness, lineType)
+
+    cv2.putText(winloseView, "Player", (70, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
+    cv2.putText(winloseView, "Computer", (350, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
+
+
+    cv2.putText(winloseView, str(win[0]), (110, 280), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
+    cv2.putText(winloseView, str(win[1]), (420, 280), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
+    cv2.putText(winloseView, winlose[0], (200, 380), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
     # 顯示圖片
 
     cv2.imshow('frame', frame)
+    cv2.imshow('winloseView', winloseView)
+
     filename = 'savedImage.jpg'
     # 存圖片
     cv2.imwrite(filename, frame)
+
     # 若按下 q 鍵則離開迴圈
 
     if cv2.waitKey(1) & 0xFF == ord('c'):
         # Filename
+        prediction(filename, win, winlose)
 
-        time.sleep(0.03)
-        prediction(filename)
-        #cv2.putText(filename, dataset[1][which_one], (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
 
-    #cv2.imshow('Result', filename)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
-
-
 
 # 釋放攝影機
 cap.release()
