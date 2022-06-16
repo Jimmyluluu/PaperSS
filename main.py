@@ -12,6 +12,8 @@ dataset = pd.read_csv('labels.txt', header=None, sep=' ')
 
 win = [0, 0]
 
+x = 220
+
 winlose = ["GOGOGO"]
 comp = 0
 
@@ -57,8 +59,10 @@ def prediction(imgae_file, win, winlose):
             max_value = num
             which_one = index
     print("Max Probability Value", max_value, "Which_one:", which_one, "is", dataset[1][which_one])
+
     comp = random.randint(0, 2)
     print("電腦出：" + dataset[1][comp])
+
     if which_one == 0:
         if comp == 0:
             print("平手")
@@ -96,7 +100,7 @@ def prediction(imgae_file, win, winlose):
         elif comp == 2:
             print("平手")
             winlose = "TIE"
-
+    return comp
 
 
 ## source tutorial-env/bin/activate
@@ -112,20 +116,21 @@ lineType = 1
 bottomLeftOrigin = 4
 
 while True:
+
     # 從攝影機擷取一張影像
     ret, frame = cap.read()
-    winloseView = np.ones((600, 600, 3), np.uint8) * 255
+    winloseView = np.ones((600, 600, 3), np.uint8) * 250
 
-    cv2.putText(winloseView, 'Paper Scissor Stone Game', org, cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 0), thickness,
+    cv2.putText(winloseView, 'Paper Scissor Stone Game', org, cv2.FONT_HERSHEY_SIMPLEX, 1.2, (87, 79, 7), thickness,
                 lineType)  # cv2.putText(winloseView, text, org, fontFace, fontScale, (255, 255, 0), thickness, lineType)
 
-    cv2.putText(winloseView, "Player", (70, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
-    cv2.putText(winloseView, "Computer", (350, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
+    cv2.putText(winloseView, "Player", (110, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (183, 203, 181), thickness, lineType)
+    cv2.putText(winloseView, "Computer", (350, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (183, 203, 181), thickness, lineType)
 
-
-    cv2.putText(winloseView, str(win[0]), (110, 280), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
-    cv2.putText(winloseView, str(win[1]), (420, 280), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
-    cv2.putText(winloseView, winlose[0], (200, 380), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0, 0), thickness, lineType)
+    cv2.putText(winloseView, str(win[0]), (150, 280), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (135, 113, 7), thickness, lineType)
+    cv2.putText(winloseView, str(win[1]), (420, 280), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (135, 113, 7), thickness, lineType)
+    cv2.putText(winloseView, winlose[0], (x, 380), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (135, 113, 7), thickness, lineType)
+    cv2.putText(winloseView, "Computer : " + dataset[1][comp], (120, 480), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (129, 163, 250), thickness, lineType)
     # 顯示圖片
 
     cv2.imshow('frame', frame)
@@ -139,11 +144,20 @@ while True:
 
     if cv2.waitKey(1) & 0xFF == ord('c'):
         # Filename
-        prediction(filename, win, winlose)
-
+        comp = prediction(filename, win, winlose)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+    if cv2.waitKey(1) & 0xFF == ord('r'):
+        win[0] = 0
+        win[1] = 0
+        x = 200
+        winlose[0] = "GOGOGO"
+
+    if win[0] == 3 or win[1] == 3:
+        x = 150
+        winlose[0] = "Press R restart"
 
 # 釋放攝影機
 cap.release()
