@@ -156,8 +156,11 @@ while True:
         winlose[0] = "GOGOGO"
 
     if win[0] == 3 or win[1] == 3:
-        x = 150
-        winlose[0] = "Press R restart"
+        x = 65
+        if win[0] == 3:
+            winlose[0] = "You Win Press R restart"
+        elif win[1] == 3:
+            winlose[0] = "You Lose Press R restart"
 
 # 釋放攝影機
 cap.release()
