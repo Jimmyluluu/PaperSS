@@ -155,11 +155,11 @@ while True:
         x = 200
         winlose[0] = "GOGOGO"
 
-    if win[0] == 3 or win[1] == 3:
+    if win[0] == 2 or win[1] == 2:
         x = 65
-        if win[0] == 3:
+        if win[0] == 2:
             winlose[0] = "You Win Press R restart"
-        elif win[1] == 3:
+        elif win[1] == 2:
             winlose[0] = "You Lose Press R restart"
 
 # 釋放攝影機

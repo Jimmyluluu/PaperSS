@@ -15,3 +15,7 @@ python3 -m venv venv
 ```angular2html
 source ./venv/bin/activate
 ```
+### 下載套件
+```angular2html
+pip3 install -r requirements.txt
+```
